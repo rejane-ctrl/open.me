@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🎉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Animated gradient background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Geometric shapes in background */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: moveShape 20s ease-in-out infinite;
+        }
+
+        .shape.circle {
+            border-radius: 50%;
+            background: white;
+        }
+
+        .shape.square {
+            background: white;
+            transform: rotate(45deg);
+        }
+
+        @keyframes moveShape {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 100px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, 50px) rotate(270deg);
+            }
+        }
+
+        /* Start screen */
+        .start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .start-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .start-title {
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: bounceIn 1s ease-out, pulse 2s ease-in-out infinite 1s;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .start-button {
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            animation: fadeInUp 1s ease-out 0.5s both, buttonPulse 2s ease-in-out infinite 1.5s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 10px 50px rgba(102, 126, 234, 0.8);
+            }
+        }
+
+        .start-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Main content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .container.visible {
+            opacity: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideDown 1s ease-out, colorShift 5s ease-in-out infinite;
+        }
+
+        @keyframes colorShift {
+            0%, 100% {
+                filter: hue-rotate(0deg);
+            }
+            50% {
+                filter: hue-rotate(20deg);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            animation: slideDown 1s ease-out 0.2s both;
+        }
+
+        /* Cards grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInScale 0.6s ease-out both;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transition: left 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .card:hover .card-icon {
+            animation: spin 0.6s ease-in-out;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Photo gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s;
+            animation: fadeInScale 0.6s ease-out both;
+        }
+
+        .photo-item:nth-child(1) { animation-delay: 0.7s; }
+        .photo-item:nth-child(2) { animation-delay: 0.8s; }
+        .photo-item:nth-child(3) { animation-delay: 0.9s; }
+        .photo-item:nth-child(4) { animation-delay: 1s; }
+        .photo-item:nth-child(5) { animation-delay: 1.1s; }
+        .photo-item:nth-child(6) { animation-delay: 1.2s; }
+
+        .photo-item:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.4s;
+        }
+
+        .photo-item:hover .photo-caption {
+            transform: translateY(0);
+        }
+
+        /* Video section */
+        .video-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: fadeInScale 0.6s ease-out 1.3s both;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Message section */
+        .message-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: fadeInScale 0.6s ease-out 1.4s both;
+        }
+
+        .message-text {
+            font-size: 1.5rem;
+            color: #555;
+            line-height: 1.8;
+            font-style: italic;
+            animation: fadeIn 2s ease-out 1.5s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .signature {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            color: #667eea;
+            font-weight: bold;
+            animation: fadeIn 2s ease-out 2s both;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .start-title {
+                font-size: 2.5rem;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+      
+    <div class="background"></div>
+    
+     
+    <div class="particles" id="particles"></div>
+    
+     
+    <div class="shapes" id="shapes"></div>
+
+     
+    <div class="start-screen" id="startScreen">
+        <h1 class="start-title">🎂 It's Your Special Day! 🎂</h1>
+        <button class="start-button" onclick="startCelebration()">Click to Celebrate!</button>
+    </div>
+
+      
+    <div class="container" id="mainContent">
+        <div class="header">
+            <h1 class="main-title">Happy Birthday!</h1>
+            <p class="subtitle">Wishing you a day filled with love, laughter, and joy!</p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">🎉</div>
+                <h3 class="card-title">Celebrate You</h3>
+                <p class="card-content">Today is all about celebrating the amazing person you are! May this year bring you endless happiness and success.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎁</div>
+                <h3 class="card-title">Special Wishes</h3>
+                <p class="card-content">Wishing you all the best on your birthday! May your dreams come true and your heart be filled with joy.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎈</div>
+                <h3 class="card-title">Another Year</h3>
+                <p class="card-content">Another year older, another year wiser, and another year more wonderful! Here's to making incredible memories.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🌟</div>
+                <h3 class="card-title">You're Amazing</h3>
+                <p class="card-content">You light up every room you enter and bring joy to everyone around you. Never stop being your incredible self!</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">💝</div>
+                <h3 class="card-title">With Love</h3>
+                <p class="card-content">Sending you all our love on your special day. You deserve all the happiness in the world! </p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎊</div>
+                <h3 class="card-title">Make a Wish</h3>
+                <p class="card-content">Blow out the candles and make a wish! May this year be your best one yet, filled with adventure and love.</p>
+            </div>
+        </div>
+
+         
+        <h2 style="color: white; text-align: center; font-size: 2.5rem; margin-bottom: 2rem; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">📸 Beautiful Memories</h2>
+        <div class="photo-gallery">
+            <div class="photo-item">
+                <img src="IMG_20250910_220822_690.jpg" alt="Birthday memory 1">
+                <div class="photo-caption">Amazing moments together</div>
+            </div>
+            <div class="photo-item">
+                <img src="image3.jpeg" alt="Birthday memory 2">
+                <div class="photo-caption">Sweet celebrations</div>
+            </div>
+            <div class="photo-item">
+                <img src="337547975_3857225417837486_5050356234394902361_n.jpg" alt="Birthday memory 3">
+                <div class="photo-caption">Friends and laughter</div>
+            </div>
+            <div class="photo-item">
+                <img src="308139355_783140253008238_1056222757836195857_n.jpg" alt="Birthday memory 4">
+                <div class="photo-caption">Colorful celebrations</div>
+            </div>
+            <div class="photo-item">
+                <img src="551278682_630079656641932_5263513272955305486_n.jpg" alt="Birthday memory 5">
+                <div class="photo-caption">Unforgettable times</div>
+            </div>
+            <div class="photo-item">
+                <img src="6134297104076621247_121.jpg" alt="Birthday memory 6">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="387583229_844742300573891_9198539660377036156_n.jpg" alt="Birthday memory 7">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="received_905512748078823.jpeg" alt="Birthday memory 8">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="received_1133337395311154.jpeg" alt="Birthday memory 9">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="308139355_783140253008238_1056222757836195857_n.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+             <div class="photo-item">
+                <img src="440465942_1496822811270198_2958565477862791971_n.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+             <div class="photo-item">
+                <img src="440508651_967150158213502_6871093836019062006_n.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="440561850_1089604782123508_3929162335689603564_n.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="441039261_464305852826720_6279624599214545044_n.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="6134297104076621253_121.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="6134297104076621255_121.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="6158966060490016659_121.jpg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="received_1834032703803321.jpeg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="received_1117373736753465.jpeg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            <div class="photo-item">
+                <img src="received_1834032703803321.jpeg" alt="Birthday memory 10">
+                <div class="photo-caption">Special surprises</div>
+            </div>
+            
+            <!-- Add more photo-items as needed -->
+        </div>
+
+          
+        <h2 style="color: white; text-align: center; font-size: 2.5rem; margin-bottom: 2rem; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">🎥 Birthday Video Message</h2>
+        <div class="video-section">
+            <div class="video-container">
+                <video controls>
+                    <source src="438907097_25223375673975308_9154525587560950175_n.mp4" type="video/mp4">
+                    
+                </video>
+            </div>
+            <br><br>
+             <div class="video-container">
+                <video controls>
+                    <source src="439427438_7256509887730221_3157118794632484687_n.mp4" type="video/mp4">
+                    
+                </video>
+            </div>
+            <br><br>
+             <div class="video-container">
+                <video controls>
+                    <source src="439503532_7835281383157406_1386478789594601349_n.mp4" type="video/mp4">
+                    
+                </video>
+            </div>
+            <br><br>
+             <div class="video-container">
+                <video controls>
+                    <source src="468089910_9578049612222385_3446047278549643831_n.mp4" type="video/mp4">
+                    
+                </video>
+            </div>
+            <br><br>
+             <div class="video-container">
+                <video controls>
+                    <source src="468121959_8776283752454507_3392511816448268675_n.mp4" type="video/mp4">
+                    
+                </video>
+            </div>
+            <br><br>
+             <div class="video-container">
+                <video controls>
+                    <source src="IMG_8717.MOV" type="video/mp4">
+                    
+                </video>
+            </div>
+            <br><br>
+             <div class="video-container">
+                <video controls>
+                    <source src="IMG_8720.MOV" type="video/mp4">
+                    
+                </video>
+            </div>
+        </div>
+
+          
+        <div class="message-section">
+            <p class="message-text">
+                "May your birthday be filled with sunshine, smiles, laughter, love, and cheer. 
+                You deserve all the wonderful things that life has to offer. 
+                Here's to another year of making beautiful memories together!"
+                (eseees ing ani diay ning ICT haha)
+            </p>
+            <p class="signature">With all our love ❤️</p>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 10 + 5;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Create geometric shapes
+        function createShapes() {
+            const shapesContainer = document.getElementById('shapes');
+            const shapeCount = 10;
+            const shapeTypes = ['circle', 'square'];
+
+            for (let i = 0; i < shapeCount; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'shape ' + shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+                
+                const size = Math.random() * 100 + 50;
+                shape.style.width = size + 'px';
+                shape.style.height = size + 'px';
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.top = Math.random() * 100 + '%';
+                shape.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                shape.style.animationDelay = Math.random() * 5 + 's';
+                
+                shapesContainer.appendChild(shape);
+            }
+        }
+
+        // Start celebration
+        function startCelebration() {
+            const startScreen = document.getElementById('startScreen');
+            const mainContent = document.getElementById('mainContent');
+            
+            startScreen.classList.add('hidden');
+            setTimeout(() => {
+                mainContent.classList.add('visible');
+            }, 500);
+        }
+
+        // Initialize
+        createParticles();
+        createShapes();
+    </script>
+</body>
+</html>
